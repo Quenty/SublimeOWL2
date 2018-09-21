@@ -1,0 +1,96 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: OWL2
+file_extensions:
+  - owl
+scope: source.owl
+variables:
+  ident: '[A-Za-z_][A-Za-z_0-9\\-]*'
+contexts:
+  main:
+    - match: (Ontology)\(
+      push: ontology
+      captures: 
+        1: variable.language
+
+    - match: '"'
+      push: string
+      scope: punctuation.definition.string.begin
+
+    - match: "<"
+      push: irn
+      scope: punctuation.definition.generic.begin
+
+    - match: \(
+      scope: punctuation.section.parens.begin
+      push: parens
+
+    - match: \)
+      scope: invalid.illegal.stray-bracket-end
+
+    - match: Prefix
+      scope: keyword.control.import
+  
+    - match: "\\^\\^"
+      scope: constant.language
+
+    - match: "[0-9]"
+      scope: constant.numeric
+
+  ontology:
+    - meta_scope: meta.namespace
+    - match: \b(ObjectPropertyAssertion|ClassAssertion|DataPropertyRange|ObjectPropertyRange|ObjectPropertyDomain|SubClassOf|DataPropertyDomain|DataPropertyAssertion)\b
+      scope: variable.language
+
+    - match: "({{ident}})\\("
+      captures: 
+        1: variable.function
+        2: punctuation.section.parens.begin
+      push: parens
+
+    - match: \)
+      pop: true
+
+    - include: main
+
+  irn:
+    - meta_scope: string.quoted.other.owl
+    - match: "(#)([A-Za-z0-9_-]+)"
+      captures:
+        1: punctuation.separator
+        2: constant.character.escape
+    - match: ">"
+      scope: punctuation.definition.generic.end
+      pop: true
+
+  string:
+    - meta_scope: string.quoted.double.owl
+    - match: \\.
+      scope: constant.character.escape.owl
+    - match: '"'
+      scope: punctuation.definition.string.end
+      pop: true
+
+  parens:
+    - meta_scope: meta.parens
+
+    - match: \)
+      scope: punctuation.section.parens.end
+      pop: true
+
+    - match: "xsd:(string|minInclusive|maxInclusive|integer|boolean|numerical|nonNegativeInteger)"
+      scope: constant.language
+
+    - match: "xsd:{{ident}}"
+      scope: invalid.illegal
+
+    - match: "({{ident}})(:)({{ident}})"
+      captures:
+        1: entity.name.namespace
+        2: punctuation.accessor
+        3: variable.other
+
+    - include: main
+    - include: ontology
+  
