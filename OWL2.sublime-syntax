@@ -112,10 +112,13 @@ contexts:
       scope: punctuation.section.parens.end
       pop: true
 
-    - match: "xsd:(string|minInclusive|maxInclusive|long|date|integer|boolean|numerical|nonNegativeInteger)"
-      scope: constant.language
+    - match: "(xsd)(:)(string|minInclusive|maxInclusive|long|date|integer|boolean|numerical|nonNegativeInteger)"
+      captures:
+        1: constant.language
+        2: constant.language
+        3: storage.type
 
-    - match: "xsd:{{ident}}"
+    - match: "(xsd):{{ident}}"
       scope: invalid.illegal
 
     - match: "({{ident}})(:)({{ident}})"
