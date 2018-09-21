@@ -35,17 +35,50 @@ contexts:
     - match: "\\^\\^"
       scope: constant.language
 
-    - match: "[0-9]"
+    - match: "\\b[0-9]+\\b"
       scope: constant.numeric
 
   ontology:
     - meta_scope: meta.namespace
-    - match: \b(ObjectPropertyAssertion|ClassAssertion|DataPropertyRange|ObjectPropertyRange|ObjectPropertyDomain|SubClassOf|DataPropertyDomain|DataPropertyAssertion)\b
+      # Axiom
+    - match: \b(Declaration|DatatypeDefinition|HasKey)\b
       scope: variable.language
 
-    - match: "({{ident}})\\("
+      # Assertion
+    - match: \b(SameIndividual|DifferentIndividuals|ClassAssertion|ObjectPropertyAssertion|NegativeObjectPropertyAssertion|DataPropertyAssertion|NegativeDataPropertyAssertion)\b
+      scope: variable.language
+
+      # ObjectPropertyAxiom
+    - match: \b(SubObjectPropertyOf|EquivalentObjectProperties|DisjointObjectProperties|InverseObjectProperties|ObjectPropertyDomain|ObjectPropertyRange|FunctionalObjectProperty|InverseFunctionalObjectProperty|ReflexiveObjectProperty|IrreflexiveObjectProperty|SymmetricObjectProperty|AsymmetricObjectProperty|TransitiveObjectProperty)\b
+      scope: variable.language
+
+      # AnnotationAxiom
+    - match: \b(AnnotationAssertion|SubAnnotationPropertyOf|AnnotationPropertyDomain|AnnotationPropertyRange)\b
+      scope: variable.language
+
+      # DataPropertyAxiom
+    - match: \b(SubDataPropertyOf|EquivalentDataProperties|DisjointDataProperties|DataPropertyDomain|DataPropertyRange|FunctionalDataProperty)\b
+      scope: variable.language
+
+      # ClassAxiom
+    - match: \b(SubClassOf|EquivalentClasses|DisjointClasses|DisjointUnion)\b
+      scope: variable.language
+
+      # Class
+    - match: \b(Class|ObjectIntersectionOf|ObjectUnionOf|ObjectComplementOf|ObjectOneOf|ObjectSomeValuesFrom|ObjectAllValuesFrom|ObjectHasValue|ObjectHasSelf|ObjectMinCardinality|ObjectMaxCardinality|ObjectExactCardinality|DataSomeValuesFrom|DataAllValuesFrom|DataHasValue|DataMinCardinality|DataMaxCardinality|DataExactCardinality)\b
+      scope: variable.language
+
+      # Individual
+    - match: \b(NamedIndividual|AnonymousIndividual|DatatypeRestriction)\b
+      scope: variable.language
+
+      # Other/IRI
+    - match: \b(ObjectProperty|AnnotationProperty|Datatype|DataProperty)\b
+      scope: variable.language
+
+    - match: "({{ident}})(\\()"
       captures: 
-        1: variable.function
+        1: invalid.illegal
         2: punctuation.section.parens.begin
       push: parens
 
@@ -59,7 +92,7 @@ contexts:
     - match: "(#)([A-Za-z0-9_-]+)"
       captures:
         1: punctuation.separator
-        2: constant.character.escape
+        2: constant.other.placeholder
     - match: ">"
       scope: punctuation.definition.generic.end
       pop: true
@@ -79,7 +112,7 @@ contexts:
       scope: punctuation.section.parens.end
       pop: true
 
-    - match: "xsd:(string|minInclusive|maxInclusive|integer|boolean|numerical|nonNegativeInteger)"
+    - match: "xsd:(string|minInclusive|maxInclusive|long|date|integer|boolean|numerical|nonNegativeInteger)"
       scope: constant.language
 
     - match: "xsd:{{ident}}"
